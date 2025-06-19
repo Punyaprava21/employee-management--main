@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/addleads_controller.dart';
-import '../../widgets/add_lead_widget/business_info_section.dart';
-import '../../widgets/add_lead_widget/contact_info_section.dart';
-import '../../widgets/add_lead_widget/lead_details_section.dart';
-import '../../widgets/add_lead_widget/modern_dropdown.dart';
 import '../../widgets/add_lead_widget/modern_text_field.dart';
 import '../../widgets/add_lead_widget/personal_info_section.dart';
 import '../../widgets/add_lead_widget/section_tile.dart';

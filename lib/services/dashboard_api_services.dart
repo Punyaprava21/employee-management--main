@@ -4,9 +4,9 @@ import 'dart:convert';
 import '../models/dashboard_model.dart';
 
 class DashboardApiService {
-
   Future<DashboardModel> fetchDashboardData({
     required String token,
+    String? month, // Added month parameter
     String? dateFilter,
     String? startDate,
     String? endDate,
@@ -14,6 +14,7 @@ class DashboardApiService {
     String? status,
   }) async {
     final queryParameters = {
+      if (month != null) 'month': month, // Add month to query parameters
       if (dateFilter != null) 'date_filter': dateFilter,
       if (startDate != null) 'start_date': startDate,
       if (endDate != null) 'end_date': endDate,
@@ -31,10 +32,10 @@ class DashboardApiService {
     );
 
     if (response.statusCode == 200) {
-      print('Filtered dashboard data: ${response.body}');
+      print('Filtered dashboard data for month $month: ${response.body}');
       return DashboardModel.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load filtered dashboard');
+      throw Exception('Failed to load filtered dashboard: ${response.statusCode} - ${response.body}');
     }
   }
 }

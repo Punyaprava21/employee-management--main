@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controller/addleads_controller.dart';
-import '../../widgets/add_lead_widget/business_info_section.dart';
 import '../../widgets/add_lead_widget/contact_info_section.dart';
 import '../../widgets/add_lead_widget/lead_details_section.dart';
 import '../../widgets/add_lead_widget/modern_text_field.dart';
@@ -43,6 +42,7 @@ Widget buildBusinessInfoSection() {
         label: 'Business Name',
         controller: addLeadsController.companyNameController,
       ),
+      
       const SizedBox(height: 20),
       buildModernTextField(
         label: 'Turnover Amount',

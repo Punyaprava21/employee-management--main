@@ -10,8 +10,8 @@ class DashboardController extends GetxController {
   var selectedStatus = 'all'.obs;
   var startDate = ''.obs;
   var endDate = ''.obs;
-  var dateFilter = 'this_month'.obs; // default: "date_range"
-  var selectedMonth = ''.obs; // Added to track selected month
+  var dateFilter = 'this_month'.obs; 
+  var selectedMonth = ''.obs; 
 
   final AuthController authController = Get.find<AuthController>();
 
@@ -27,7 +27,7 @@ class DashboardController extends GetxController {
       ever(dateFilter, (_) => loadDashboardData());
       ever(startDate, (_) => loadDashboardData());
       ever(endDate, (_) => loadDashboardData());
-      ever(selectedMonth, (_) => _updateDateRangeFromMonth()); // Added to refresh on month change
+      ever(selectedMonth, (_) => _updateDateRangeFromMonth()); 
 
       super.onInit();
     }
@@ -52,18 +52,16 @@ class DashboardController extends GetxController {
       isLoading(false);
     }
   }
-
-  // Method to update startDate and endDate based on selected month
   void _updateDateRangeFromMonth() {
     if (selectedMonth.value.isNotEmpty && dateFilter.value == 'this_month') {
-      final now = DateTime.now(); // 03:24 PM IST, June 19, 2025
+      final now = DateTime.now(); 
       final year = now.year;
       final month = int.parse(selectedMonth.value);
       final start = DateTime(year, month, 1).toIso8601String().split('T')[0];
       final end = DateTime(year, month + 1, 0).toIso8601String().split('T')[0];
       startDate.value = start;
       endDate.value = end;
-      loadDashboardData(); // Refresh data with new date range
+      loadDashboardData(); 
     }
   }
 

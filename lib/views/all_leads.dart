@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kredipal/widgets/custom_app_bar.dart';
 import '../controller/allleads_controller.dart';
-
 import '../models/all_leads_model.dart';
 
 class AllLeadsScreen extends StatelessWidget {
@@ -21,8 +20,6 @@ class AllLeadsScreen extends StatelessWidget {
       body: Column(
         children: [
           // Custom Header with Aggregates
-
-          // Search and Filter Section
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
@@ -38,7 +35,6 @@ class AllLeadsScreen extends StatelessWidget {
                               'PL', 'personal_loan', controller),
                           _buildFilterLeadType(
                               'BL', 'business_loan', controller),
-                          // _buildFilterLeadType('CCL', 'creditcard_loan', controller),
                         ],
                       )),
                 ),
@@ -52,24 +48,15 @@ class AllLeadsScreen extends StatelessWidget {
                         children: [
                           _buildFilterChip('Total Leads', 'all', controller),
                           _buildFilterChip(
-                              'Disbursed Leads', 'completed', controller),
+                              'Disbursed Leads', 'disbursed', controller), // Changed from 'completed' to 'disbursed'
                           _buildFilterChip(
                               'Approved Leads', 'approved', controller),
                           _buildFilterChip(
-                              'Login Leads', 'pending', controller),
+                              'Pending Leads', 'pending', controller),
                           _buildFilterChip(
                               'Rejected Leads', 'rejected', controller),
                         ],
                       )),
-                ),
-
-                Row(
-                  children: [
-                    _buildDateFilterDropdown(controller),
-                    const SizedBox(height: 10),
-                    Expanded(child: _buildDateRangePicker(controller)),
-                    const SizedBox(height: 10),
-                  ],
                 ),
               ],
             ),
@@ -149,19 +136,17 @@ class AllLeadsScreen extends StatelessWidget {
           amount = controller
               .formatCurrency(aggregates.pendingLeads?.totalAmount ?? '0');
           break;
-        case 'disbursed':
+        case 'disbursed': // Updated to match API
           count = aggregates.disbursedLeads?.count ?? 0;
           amount = controller
               .formatCurrency(aggregates.disbursedLeads?.totalAmount ?? '0');
           break;
-
         case 'rejected':
           count = controller.filteredLeads
               .where(
                 (lead) => lead.status?.toLowerCase() == 'rejected',
               )
               .length;
-
           double totalRejectedAmount = controller.filteredLeads
               .where((lead) => lead.status?.toLowerCase() == 'rejected')
               .fold(0.0, (sum, lead) {
@@ -173,7 +158,6 @@ class AllLeadsScreen extends StatelessWidget {
             }
             return sum + amount;
           });
-
           amount = controller.formatCurrency(totalRejectedAmount);
           break;
       }
@@ -215,32 +199,6 @@ class AllLeadsScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildDateFilterDropdown(AllLeadsController controller) {
-    return Obx(() => DropdownButton<String>(
-          value: controller.dateFilter.value,
-          items: const [
-            DropdownMenuItem(value: 'this_month', child: Text('This Month')),
-            DropdownMenuItem(value: 'this_year', child: Text('This Year')),
-            DropdownMenuItem(value: 'date_range', child: Text('Date Range')),
-          ],
-          onChanged: (val) {
-            if (val != null) {
-              controller.dateFilter.value = val;
-              controller.fetchAllLeads(
-                leadType: controller.selectedLeadType.value == 'All'
-                    ? null
-                    : controller.selectedLeadType.value,
-                status: controller.selectedStatus.value == 'all'
-                    ? null
-                    : controller.selectedStatus.value,
-                startDate: controller.startDate.value,
-                endDate: controller.endDate.value,
-              );
-            }
-          },
-        ));
   }
 
   Widget _buildFilterLeadType(
@@ -457,7 +415,7 @@ class AllLeadsScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
+               ),
 
                 const SizedBox(height: 16),
 

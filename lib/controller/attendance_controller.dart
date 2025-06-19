@@ -20,7 +20,7 @@ enum AttendanceState {
 }
 
 class AttendanceController extends GetxController {
-  final ApiService _apiService = Get.find<ApiService>();
+  final ApiService _apiService = Get.put(ApiService());
   final AuthController authController = Get.find<AuthController>();
 
   final Rx<AttendanceState> currentState = AttendanceState.initial.obs;
@@ -103,9 +103,10 @@ class AttendanceController extends GetxController {
       todayAttendance.value = AttendanceRecord(
         checkIn: response.checkInTime,
         checkOut: response.checkOutTime,
-        checkInCoordinates: response.latitude != null && response.longitude != null
-            ? '${response.latitude},${response.longitude}'
-            : null,
+        checkInCoordinates:
+            response.latitude != null && response.longitude != null
+                ? '${response.latitude},${response.longitude}'
+                : null,
       );
 
       if (response.status == 'completed') {
@@ -145,8 +146,10 @@ class AttendanceController extends GetxController {
       );
       attendanceLocation.value = response;
       if (response is AttendanceLocationResponse) {
-        currentLocation.value = response.currentLocation ?? currentLocation.value;
-        currentCoordinates.value = response.currentCoordinates ?? currentCoordinates.value;
+        currentLocation.value =
+            response.currentLocation ?? currentLocation.value;
+        currentCoordinates.value =
+            response.currentCoordinates ?? currentCoordinates.value;
       } else if (response is AttendanceStatusResponse) {
         currentLocation.value = response.message;
         currentCoordinates.value = '0.0,0.0';
@@ -339,7 +342,8 @@ class AttendanceController extends GetxController {
       return;
     }
 
-    if (currentLocation.value.isEmpty || currentLocation.value == 'Location unavailable') {
+    if (currentLocation.value.isEmpty ||
+        currentLocation.value == 'Location unavailable') {
       _handleError('Location not available');
       canReCheckIn.value = true;
       return;
@@ -397,7 +401,8 @@ class AttendanceController extends GetxController {
       return;
     }
 
-    if (currentLocation.value.isEmpty || currentLocation.value == 'Location unavailable') {
+    if (currentLocation.value.isEmpty ||
+        currentLocation.value == 'Location unavailable') {
       _handleError('Location not available');
       return;
     }
@@ -573,5 +578,6 @@ class AttendanceController extends GetxController {
 
   bool get canCheckIn => attendanceStatus.value?.buttonAction == 'checkin';
   bool get canCheckOut => attendanceStatus.value?.buttonAction == 'checkout';
-  bool get isAttendanceComplete => attendanceStatus.value?.status == 'completed';
+  bool get isAttendanceComplete =>
+      attendanceStatus.value?.status == 'completed';
 }

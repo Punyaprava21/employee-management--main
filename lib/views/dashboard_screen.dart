@@ -2506,8 +2506,6 @@
 
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kredipal/constant/app_color.dart';
@@ -2680,18 +2678,16 @@ class _EnhancedDashboardScreenState extends State<DashboardScreen>
                                   'BL', 'business_loan', dashboardController),
                               _buildFilterButton(
                                   'HL', 'home_loan', dashboardController),
-                              // _buildFilterButton('CCL', 'creditcard_loan',
-                              //     dashboardController),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 5),
                       SizedBox(
-                        width: screenWidth * 0.4, // Constrained width to prevent overflow
+                        width: screenWidth * 0.4,
                         child: _buildDateFilterDropdown(dashboardController),
                       ),
-                      _buildDateRangeSection(dashboardController), // Removed Expanded to avoid overflow
+                      _buildDateRangeSection(dashboardController),
                     ],
                   ),
                   _buildEnhancedLeadStatusSection(isTablet),
@@ -2915,12 +2911,12 @@ class _EnhancedDashboardScreenState extends State<DashboardScreen>
           }
         },
         isExpanded: true,
-        style: const TextStyle(fontSize: 14, color: Colors.black87),
-        underline: Container(
-          height: 1,
-          color: Colors.grey,
-        ),
-        iconSize: 24,
+        // style: const TextStyle(fontSize: 14, color: Colors.black87),
+        // underline: Container(
+        //   height: 1,
+        //   color: Colors.grey,
+        // ),
+        // iconSize: 24,
       );
     });
   }
@@ -2964,24 +2960,24 @@ class _EnhancedDashboardScreenState extends State<DashboardScreen>
           'color': const Color(0xFF3B82F6),
           'rate': '10.5% onwards',
           'features': ['No collateral', 'Instant approval'],
-          'onTap': () => Get.to(
-              () => const AddLeadsPage(preselectedLeadType: 'personal_loan')),
+          'onTap': () =>
+              Get.to(() => AddLeadsPage(preselectedLeadType: 'personal_loan')),
         },
         {
           'title': 'Business Loan',
           'subtitle': _formatCurrency(businessLoanAmount),
           'icon': Icons.business_center_outlined,
           'color': const Color(0xFF10B981),
-          'onTap': () => Get.to(
-              () => const AddLeadsPage(preselectedLeadType: 'business_loan')),
+          'onTap': () =>
+              Get.to(() => AddLeadsPage(preselectedLeadType: 'business_loan')),
         },
         {
           'title': 'Home Loan',
           'subtitle': _formatCurrency(homeLoanAmount),
           'icon': Icons.home_outlined,
           'color': const Color(0xFFF59E0B),
-          'onTap': () => Get.to(
-              () => const AddLeadsPage(preselectedLeadType: 'home_loan')),
+          'onTap': () =>
+              Get.to(() => AddLeadsPage(preselectedLeadType: 'home_loan')),
         },
         {
           'title': 'Credit Card',
@@ -2989,7 +2985,7 @@ class _EnhancedDashboardScreenState extends State<DashboardScreen>
           'icon': Icons.credit_card_outlined,
           'color': const Color(0xFF8B5CF6),
           'onTap': () => Get.to(
-              () => const AddLeadsPage(preselectedLeadType: 'creditcard_loan')),
+              () => AddLeadsPage(preselectedLeadType: 'creditcard_loan')),
         },
       ];
 
@@ -3104,37 +3100,32 @@ class _EnhancedDashboardScreenState extends State<DashboardScreen>
         'title': 'Credit Card',
         'icon': Icons.credit_score_outlined,
         'color': const Color(0xFF10B981),
-        'onTap': () =>  Get.to(() => const CreditCardScreen()),
-      
+        'onTap': () => Get.to(() => const CreditCardScreen()),
       },
       {
         'title': 'Documents',
         'icon': Icons.description_outlined,
         'color': const Color(0xFFF59E0B),
-        'onTap': () =>  Get.to(() => const DocumentScreen()),
-      
+        'onTap': () => Get.to(() => const DocumentScreen()),
       },
       {
         'title': 'Support',
         'icon': Icons.support_agent_outlined,
         'color': const Color(0xFF8B5CF6),
         'onTap': () => Get.to(() => const SupportScreen()),
-      
       },
       // {
       //   'title': 'Loan Status',
       //   'icon': Icons.track_changes_outlined,
       //   'color': const Color(0xFFDC2626),
       //   'onTap': () =>   Get.to(() => EmiCalculatorPage()),
-      
-      
+
       // },
       {
         'title': 'Reports',
         'icon': Icons.analytics_outlined,
         'color': const Color(0xFF059669),
-        'onTap': () =>  Get.to(() => const ReportsScreen()),
-      
+        'onTap': () => Get.to(() => const ReportsScreen()),
       },
     ];
 
@@ -3317,14 +3308,14 @@ class _EnhancedDashboardScreenState extends State<DashboardScreen>
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Lead Status',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
-          ),
+          // const Text(
+          //   'Lead Status',
+          //   style: TextStyle(
+          //     fontSize: 20,
+          //     fontWeight: FontWeight.bold,
+          //     color: Color(0xFF1E293B),
+          //   ),
+          // ),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
