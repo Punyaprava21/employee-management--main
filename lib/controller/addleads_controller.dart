@@ -22,6 +22,11 @@ class AddLeadsController extends GetxController {
   final leadAmountController = TextEditingController();
   final salaryController = TextEditingController();
   final remarksController = TextEditingController();
+  final businessBudgetController = TextEditingController();
+  final itReturnController = TextEditingController();
+  final businessVintageController = TextEditingController(); 
+  final RxString selectedVintageYear = '2'.obs; 
+  List<String> vintageYearList = List.generate(10, (index) => '${index + 1}');// default value to pass validation// New field for Business Vintage
 
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   RxString selectedSuccessRatio = ''.obs;
@@ -137,30 +142,28 @@ class AddLeadsController extends GetxController {
         if (selectedDate.value != null) {
           body["dob"] = DateFormat("yyyy-MM-dd").format(selectedDate.value!);
         }
-      }
-
-      else if (leadType == 'business_loan') {
+      } else if (leadType == 'business_loan') {
         body.addAll({
           "business_name": companyNameController.text.trim(),
           "phone": phoneController.text.trim(),
           "email": emailController.text.trim(),
           "location": selectedLocation.value,
           "lead_amount": (double.tryParse(leadAmountController.text) ?? 0.0).toString(),
-          "turnover_amount": (double.tryParse(salaryController.text) ?? 0.0).toString(), // assuming salaryController used as turnover input
-          "vintage_year": (selectedDate.value?.year != null)
-              ? (DateTime.now().year - selectedDate.value!.year).toString()
-              : "0",
+          "turnover_amount": (double.tryParse(salaryController.text) ?? 0.0).toString(),
+          "business_budget": (double.tryParse(businessBudgetController.text) ?? 0.0).toString(),
+          "it_return": itReturnController.text.trim(),
+          "vintage_year": selectedVintageYear.value,// New field, parsed as integer
           "success_percentage": (int.tryParse(selectedSuccessRatio.value) ?? 0).toString(),
           "remarks": remarksController.text.trim(),
         });
-      }
 
-      else if (leadType == 'creditcard_loan') {
+
+      } else if (leadType == 'creditcard_loan') {
         body.addAll({
           "name": nameController.text.trim(),
           "phone": phoneController.text.trim(),
           "email": emailController.text.trim(),
-          "bank_name": selectedBanks.join(', ') // Convert list to string like: "HDFC, ICICI"
+          "bank_name": selectedBanks.join(', '), 
         });
       }
 
@@ -196,6 +199,9 @@ class AddLeadsController extends GetxController {
     companyNameController.clear();
     leadAmountController.clear();
     salaryController.clear();
+    businessBudgetController.clear();
+    itReturnController.clear();
+    businessVintageController.clear(); // Clear new field
     remarksController.clear();
     selectedDate.value = null;
     selectedSuccessRatio.value = '';
@@ -203,7 +209,22 @@ class AddLeadsController extends GetxController {
     selectedMonth.value = '';
     selectedLocation.value = '';
     voiceFilePath.value = '';
-    voiceRecorderController
-        .onClose(); // you can clear your recorded file path also if needed
+    voiceRecorderController.onClose(); // Clear recorded file path if needed
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    locationController.dispose();
+    companyNameController.dispose();
+    leadAmountController.dispose();
+    salaryController.dispose();
+    businessBudgetController.dispose();
+    itReturnController.dispose();
+    businessVintageController.dispose(); // Dispose new controller
+    remarksController.dispose();
+    super.onClose();
   }
 }

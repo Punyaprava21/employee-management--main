@@ -6,23 +6,16 @@ import '../models/dashboard_model.dart';
 class DashboardApiService {
   Future<DashboardModel> fetchDashboardData({
     required String token,
-    String? month, // Added month parameter
-    String? dateFilter,
-    String? startDate,
-    String? endDate,
-    String? leadType,
-    String? status,
+    required String expectedMonth,
+    required String leadType,
   }) async {
     final queryParameters = {
-      if (month != null) 'month': month, // Add month to query parameters
-      if (dateFilter != null) 'date_filter': dateFilter,
-      if (startDate != null) 'start_date': startDate,
-      if (endDate != null) 'end_date': endDate,
-      if (leadType != null) 'lead_type': leadType,
-      if (status != null) 'status': status,
+      'expected_month': expectedMonth,
+      'lead_type': leadType,
     };
 
-    final url = Uri.parse('${ApiUrl.baseUrl}/api/dashboard').replace(queryParameters: queryParameters);
+    final url = Uri.parse('${ApiUrl.baseUrl}/api/dashboard')
+        .replace(queryParameters: queryParameters);
 
     final response = await http.get(
       url,
@@ -32,10 +25,10 @@ class DashboardApiService {
     );
 
     if (response.statusCode == 200) {
-      print('Filtered dashboard data for month $month: ${response.body}');
+      print('Filtered dashboard data: ${response.body}');
       return DashboardModel.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load filtered dashboard: ${response.statusCode} - ${response.body}');
+      throw Exception('Failed to load filtered dashboard');
     }
   }
 }

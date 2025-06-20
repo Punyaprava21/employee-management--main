@@ -6,62 +6,41 @@ import '../services/dashboard_api_services.dart';
 class DashboardController extends GetxController {
   var dashboardData = DashboardModel().obs;
   var isLoading = true.obs;
+
   var selectedLeadType = 'all'.obs;
-  var selectedStatus = 'all'.obs;
-  var startDate = ''.obs;
-  var endDate = ''.obs;
-  var dateFilter = 'this_month'.obs; 
-  var selectedMonth = ''.obs; 
+  var expectedMonth = 'June'.obs; 
 
   final AuthController authController = Get.find<AuthController>();
-
   final DashboardApiService _apiService = DashboardApiService();
 
   @override
   void onInit() {
     if (authController.token.value.isNotEmpty) {
       loadDashboardData();
-      // Auto-refresh on filter change
-      ever(selectedLeadType, (_) => loadDashboardData());
-      ever(selectedStatus, (_) => loadDashboardData());
-      ever(dateFilter, (_) => loadDashboardData());
-      ever(startDate, (_) => loadDashboardData());
-      ever(endDate, (_) => loadDashboardData());
-      ever(selectedMonth, (_) => _updateDateRangeFromMonth()); 
 
-      super.onInit();
+      // Refresh on leadType or expectedMonth change
+      ever(selectedLeadType, (_) => loadDashboardData());
+      ever(expectedMonth, (_) => loadDashboardData());
     }
+
     super.onInit();
   }
 
   Future<void> loadDashboardData() async {
     try {
       isLoading(true);
+
       final result = await _apiService.fetchDashboardData(
         token: authController.token.value,
-        dateFilter: dateFilter.value,
-        startDate: startDate.value.isNotEmpty ? startDate.value : null,
-        endDate: endDate.value.isNotEmpty ? endDate.value : null,
+        expectedMonth: expectedMonth.value,
         leadType: selectedLeadType.value,
-        status: selectedStatus.value,
       );
+
       dashboardData(result);
     } catch (e) {
       print("Error: $e");
     } finally {
       isLoading(false);
-    }
-  }
-  void _updateDateRangeFromMonth() {
-    if (selectedMonth.value.isNotEmpty && dateFilter.value == 'this_month') {
-      final now = DateTime.now(); 
-      final year = now.year;
-      final month = int.parse(selectedMonth.value);
-      final start = DateTime(year, month, 1).toIso8601String().split('T')[0];
-      final end = DateTime(year, month + 1, 0).toIso8601String().split('T')[0];
-      startDate.value = start;
-      endDate.value = end;
-      loadDashboardData(); 
     }
   }
 

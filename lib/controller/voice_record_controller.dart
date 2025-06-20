@@ -1,3 +1,110 @@
+// import 'dart:io';
+// import 'package:get/get.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:path_provider/path_provider.dart';
+
+// class VoiceRecorderController extends GetxController {
+//   final FlutterSoundRecorder recorder = FlutterSoundRecorder();
+//   final FlutterSoundPlayer player = FlutterSoundPlayer();
+
+//   final RxBool isRecording = false.obs;
+//   final RxBool isPlaying = false.obs;
+
+//   String? recordedFilePath;
+//   bool _isRecorderInitialized = false;
+//   bool _isPlayerInitialized = false;
+
+//   @override
+//   void onInit() {
+//     super.onInit();
+//   }
+
+//   Future<void> init() async {
+//     await _requestPermissions();
+//     await _initRecorder();
+//     await _initPlayer();
+//   }
+
+//   Future<void> _requestPermissions() async {
+//     var mic = await Permission.microphone.request();
+//     var storage = await Permission.storage.request();
+//     var media = await Permission.mediaLibrary.request();
+
+//     if (!mic.isGranted || !storage.isGranted) {
+//       Get.snackbar("Permission Denied", "Microphone and storage permission required");
+//     }
+//   }
+
+//   Future<void> _initRecorder() async {
+//     await recorder.openRecorder();
+//     _isRecorderInitialized = true;
+//   }
+
+//   Future<void> _initPlayer() async {
+//     await player.openPlayer();
+//     _isPlayerInitialized = true;
+//   }
+
+//   Future<void> startRecording() async {
+//     if (!_isRecorderInitialized) {
+//       await _initRecorder();
+//     }
+
+//     final dir = await getTemporaryDirectory();
+//     recordedFilePath = "${dir.path}/recorded_voice.aac";
+
+//     await recorder.startRecorder(
+//       toFile: recordedFilePath,
+//       codec: Codec.aacADTS,
+//     );
+//     isRecording.value = true;
+//   }
+
+//   Future<void> stopRecording() async {
+//     await recorder.stopRecorder();
+//     isRecording.value = false;
+//     print("Recording saved: $recordedFilePath");
+//   }
+
+//   Future<void> playRecording() async {
+//     if (recordedFilePath == null || !File(recordedFilePath!).existsSync()) {
+//       Get.snackbar("Error", "No recording found");
+//       return;
+//     }
+
+//     if (!_isPlayerInitialized) {
+//       await _initPlayer();
+//     }
+
+//     await player.startPlayer(
+//       fromURI: recordedFilePath!,
+//       codec: Codec.aacADTS,
+//       whenFinished: () {
+//         isPlaying.value = false;
+//       },
+//     );
+//     isPlaying.value = true;
+//   }
+
+//   Future<void> stopPlaying() async {
+//     await player.stopPlayer();
+//     isPlaying.value = false;
+//   }
+
+//   @override
+//   void onClose() {
+//     recorder.closeRecorder();
+//     player.closePlayer();
+//     super.onClose();
+//   }
+// }
+
+
+
+
+
+
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -16,55 +123,84 @@ class VoiceRecorderController extends GetxController {
   bool _isPlayerInitialized = false;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
+    await init();
   }
 
   Future<void> init() async {
-    await _requestPermissions();
-    await _initRecorder();
-    await _initPlayer();
+    try {
+      await _requestPermissions();
+      await _initRecorder();
+      await _initPlayer();
+    } catch (e) {
+      print("Initialization error: $e");
+      Get.snackbar("Error", "Failed to initialize recorder/player");
+    }
   }
 
   Future<void> _requestPermissions() async {
-    var mic = await Permission.microphone.request();
-    var storage = await Permission.storage.request();
-    var media = await Permission.mediaLibrary.request();
+    var statuses = await [
+      Permission.microphone,
+      Permission.storage,
+      Permission.mediaLibrary,
+    ].request();
 
-    if (!mic.isGranted || !storage.isGranted) {
+    if (!statuses[Permission.microphone]!.isGranted ||
+        !statuses[Permission.storage]!.isGranted) {
       Get.snackbar("Permission Denied", "Microphone and storage permission required");
+      await [Permission.microphone, Permission.storage].request();
     }
   }
 
   Future<void> _initRecorder() async {
-    await recorder.openRecorder();
-    _isRecorderInitialized = true;
+    try {
+      await recorder.openRecorder();
+      _isRecorderInitialized = true;
+    } catch (e) {
+      print("Recorder initialization error: $e");
+    }
   }
 
   Future<void> _initPlayer() async {
-    await player.openPlayer();
-    _isPlayerInitialized = true;
+    try {
+      await player.openPlayer();
+      _isPlayerInitialized = true;
+    } catch (e) {
+      print("Player initialization error: $e");
+    }
   }
 
   Future<void> startRecording() async {
     if (!_isRecorderInitialized) {
       await _initRecorder();
     }
+    if (await recorder.isRecording) return; 
 
     final dir = await getTemporaryDirectory();
-    recordedFilePath = "${dir.path}/recorded_voice.aac";
+    recordedFilePath = "${dir.path}/recorded_voice_${DateTime.now().millisecondsSinceEpoch}.aac";
 
-    await recorder.startRecorder(
-      toFile: recordedFilePath,
-      codec: Codec.aacADTS,
-    );
-    isRecording.value = true;
+    try {
+      await recorder.startRecorder(
+        toFile: recordedFilePath,
+        codec: Codec.aacADTS,
+      );
+      isRecording.value = true;
+    } catch (e) {
+      print("Recording error: $e");
+      Get.snackbar("Error", "Failed to start recording");
+    }
   }
 
   Future<void> stopRecording() async {
-    await recorder.stopRecorder();
-    isRecording.value = false;
-    print("Recording saved: $recordedFilePath");
+    if (!await recorder.isRecording) return; 
+    try {
+      await recorder.stopRecorder();
+      isRecording.value = false;
+      print("Recording saved: $recordedFilePath");
+    } catch (e) {
+      print("Stop recording error: $e");
+    }
   }
 
   Future<void> playRecording() async {
@@ -76,20 +212,35 @@ class VoiceRecorderController extends GetxController {
     if (!_isPlayerInitialized) {
       await _initPlayer();
     }
+    if (await player.isPlaying) {
+      await stopPlaying();
+      return;
+    }
 
-    await player.startPlayer(
-      fromURI: recordedFilePath!,
-      codec: Codec.aacADTS,
-      whenFinished: () {
-        isPlaying.value = false;
-      },
-    );
-    isPlaying.value = true;
+    try {
+      await player.startPlayer(
+        fromURI: recordedFilePath!,
+        codec: Codec.aacADTS,
+        whenFinished: () {
+          isPlaying.value = false;
+        },
+      );
+      isPlaying.value = true;
+    } catch (e) {
+      print("Playback error: $e");
+      Get.snackbar("Error", "Failed to play recording");
+    }
   }
 
   Future<void> stopPlaying() async {
-    await player.stopPlayer();
-    isPlaying.value = false;
+    if (await player.isPlaying) {
+      try {
+        await player.stopPlayer();
+        isPlaying.value = false;
+      } catch (e) {
+        print("Stop playback error: $e");
+      }
+    }
   }
 
   @override

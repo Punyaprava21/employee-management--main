@@ -15,15 +15,15 @@ Widget buildLeadDetailsSection() {
         controller: addLeadsController.leadAmountController,
         keyboardType: TextInputType.number,
       ),
-      const SizedBox(height: 20),
-      Obx(() => buildModernDropdown(
-        label: 'Success Percentage',
-        value: addLeadsController.selectedSuccessRatio.value,
-        items: addLeadsController.successPer,
-        onChanged: (val) {
-          addLeadsController.selectedSuccessRatio.value = val ?? '';
-        },
-      )),
+     // const SizedBox(height: 20),
+      // Obx(() => buildModernDropdown(
+      //   label: 'Success Percentage',
+      //   value: addLeadsController.selectedSuccessRatio.value,
+      //   items: addLeadsController.successPer,
+      //   onChanged: (val) {
+      //     addLeadsController.selectedSuccessRatio.value = val ?? '';
+      //   },
+      // )),
       const SizedBox(height: 20),
       Obx(() => buildModernDropdown(
         label: 'Expected Month',
